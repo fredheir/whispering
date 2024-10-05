@@ -39,5 +39,8 @@ export class RecordingsDbService extends Context.Tag('RecordingsDbService')<
 		readonly deleteRecordingsById: (
 			ids: string[],
 		) => Effect.Effect<void, WhisperingError>;
+		readonly deleteRecordingsOlderThanIsoString: (
+			isoString: string,
+		) => Effect.Effect<void, WhisperingError, never>;
 	}
 >() {}

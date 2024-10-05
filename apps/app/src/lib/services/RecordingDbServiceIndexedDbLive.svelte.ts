@@ -111,6 +111,7 @@ export const RecordingsDbServiceLiveIndexedDb = Layer.effect(
 							},
 						}),
 				}),
+
 			updateRecording: (recording) =>
 				Effect.tryPromise({
 					try: async () => {
@@ -133,6 +134,7 @@ export const RecordingsDbServiceLiveIndexedDb = Layer.effect(
 							},
 						}),
 				}),
+
 			deleteRecordingById: (id) =>
 				Effect.tryPromise({
 					try: async () => {
@@ -160,6 +162,7 @@ export const RecordingsDbServiceLiveIndexedDb = Layer.effect(
 							},
 						}),
 				}),
+
 			deleteRecordingsById: (ids) =>
 				Effect.tryPromise({
 					try: async () => {
@@ -187,6 +190,39 @@ export const RecordingsDbServiceLiveIndexedDb = Layer.effect(
 							},
 						}),
 				}),
+
+			deleteRecordingsOlderThanIsoString: (isoString: string) =>
+				Effect.tryPromise({
+					try: async () => {
+						const tx = (await dbPromise).transaction(
+							[RECORDING_METADATA_STORE, RECORDING_BLOB_STORE],
+							'readwrite',
+						);
+						const recordingMetadataStore = tx.objectStore(
+							RECORDING_METADATA_STORE,
+						);
+						const recordingBlobStore = tx.objectStore(RECORDING_BLOB_STORE);
+						const recordings = await recordingMetadataStore.getAll();
+						const recordingsBeforeDate = recordings.filter(
+							(recording) => recording.timestamp < isoString,
+						);
+						for (const recording of recordingsBeforeDate) {
+							await recordingMetadataStore.delete(recording.id);
+							await recordingBlobStore.delete(recording.id);
+						}
+						await tx.done;
+					},
+					catch: (error) =>
+						new WhisperingError({
+							title: 'Error deleting recordings from indexedDB',
+							description: 'Please try again',
+							action: {
+								type: 'more-details',
+								error,
+							},
+						}),
+				}),
+
 			getAllRecordings: Effect.tryPromise({
 				try: async () => {
 					const tx = (await dbPromise).transaction(
@@ -217,6 +253,7 @@ export const RecordingsDbServiceLiveIndexedDb = Layer.effect(
 						},
 					}),
 			}),
+
 			getRecording: (id) =>
 				Effect.tryPromise({
 					try: async () => {
