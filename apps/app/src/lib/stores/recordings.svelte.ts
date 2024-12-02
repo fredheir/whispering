@@ -233,9 +233,26 @@ export const createRecordings = () => {
 				}
 				const transcribedText = transcribeResult.data;
 
+				// postprocess if replacements are defined
+				let processedText = transcribedText;
+				if (settings.value.replacementMap) {
+					const pattern = new RegExp(
+						`\\b(${Object.keys(settings.value.replacementMap)
+							//escape special characters and wrap each word with word boundaries
+							.map((key) => key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
+							.join('|')})\\b`,
+						'gi',
+					);
+
+					processedText = processedText.replace(pattern, (match) => {
+						console.log('match: ', match.toLowerCase());
+						return settings.value.replacementMap[match.toLowerCase()] ?? match;
+					});
+				}
+
 				const updateRecordingResult = await updateRecording({
 					...recording,
-					transcribedText,
+					transcribedText: processedText,
 					transcriptionStatus: 'DONE',
 				});
 				if (!updateRecordingResult.ok) return updateRecordingResult;

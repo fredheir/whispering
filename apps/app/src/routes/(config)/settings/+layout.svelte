@@ -10,6 +10,7 @@
 		{ title: 'Recording', href: '/settings/recording' },
 		{ title: 'Transcription', href: '/settings/transcription' },
 		{ title: 'Shortcuts', href: '/settings/shortcuts' },
+		{ title: 'Replacements', href: '/settings/replacements' },
 	] as const;
 
 	const isString = (value: unknown): value is string =>

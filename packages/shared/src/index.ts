@@ -58,6 +58,7 @@ export const settingsSchema = z.object({
 
 	currentLocalShortcut: z.string(),
 	currentGlobalShortcut: z.string(),
+	replacementMap: z.record(z.string(), z.string()),
 });
 
 export type Settings = z.infer<typeof settingsSchema>;
@@ -82,6 +83,7 @@ export const getDefaultSettings = (platform: 'app' | 'extension') =>
 
 		currentLocalShortcut: 'space',
 		currentGlobalShortcut: platform === 'app' ? 'CommandOrControl+Shift+;' : '',
+		replacementMap: {},
 	}) satisfies Settings;
 
 type WhisperingErrProperties = {
@@ -111,21 +113,15 @@ export const BubbleErr = <E extends BubbleErrProperties>(error: E): BubbleErr =>
 
 export type WhisperingErr = Err<WhisperingErrProperties>;
 
-export const WhisperingErr = (
-	error: Omit<WhisperingErrProperties, '_tag'>,
-): WhisperingErr => Err({ ...error, _tag: 'WhisperingError' });
-
-export const trySyncWhispering = <T, E extends WhisperingErrProperties>(
-	opts: Parameters<typeof trySync<T, E>>[0],
-): WhisperingResult<T, E> => trySync(opts);
-
-export const trySyncBubble = <T, E extends BubbleErrProperties>(
-	opts: Parameters<typeof trySync<T, E>>[0],
-): BubbleResult<T, E> => trySync(opts);
-
-export const tryAsyncBubble = <T, E extends BubbleErrProperties>(
-	opts: Parameters<typeof tryAsync<T, E>>[0],
-): Promise<BubbleResult<T, E>> => tryAsync(opts);
+export const effectToResult = <T>(
+	effect: Effect.Effect<T, WhisperingError>,
+): Effect.Effect<Result<T>> =>
+	effect.pipe(
+		Effect.map((data) => ({ isSuccess: true, data }) as const),
+		Effect.catchAll((error) =>
+			Effect.succeed({ isSuccess: false, error } as const),
+		),
+	);
 
 export const tryAsyncWhispering = <T, E extends WhisperingErrProperties>(
 	opts: Parameters<typeof tryAsync<T, E>>[0],
