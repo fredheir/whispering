@@ -39,10 +39,11 @@ export const settingsSchema = S.Struct({
 	selectedAudioInputDeviceId: S.String,
 	bitsPerSecond: S.optionalWith(
 		S.compose(S.Number, S.Literal(...BITRATE_VALUES)),
-		{
-			default: () => DEFAULT_BITRATE_MS,
-		},
+		{ default: () => DEFAULT_BITRATE_MS },
 	),
+	deleteRecordingsOlderThanIsoString: S.optionalWith(S.String, {
+		default: () => 'Never',
+	}),
 
 	selectedTranscriptionService: S.Literal(...TRANSCRIPTION_SERVICES),
 	openAiApiKey: S.String,
