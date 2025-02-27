@@ -13,6 +13,13 @@
 		"lint": "eslint --fix . && prettier --check .",
 		"format": "prettier --write ."
 	},
+	"exports": {
+		"./app.css": "./src/app.css",
+		"./postcss.config": "./postcss.config.js",
+		"./tailwind.config": "./tailwind.config.ts",
+		"./lib/*": "./src/lib/*.ts",
+		"./components/*": "./src/lib/components/ui/*/index.ts"
+	},
 	"devDependencies": {
 		"@eslint/compat": "^1.2.4",
 		"@sveltejs/adapter-static": "3.0.6",
