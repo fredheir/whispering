@@ -7,9 +7,7 @@ export default defineConfig({
 		version: '6.4.3',
 		description:
 			"Seamlessly integrate speech-to-text transcriptions on ChatGPT and anywhere on the web. Powered by OpenAI's Whisper API.",
-		author: {
-			email: 'whispering@bradenwong.com',
-		},
+		author: { email: 'whispering@bradenwong.com' },
 		permissions: [
 			'storage',
 			'activeTab',
