@@ -40,6 +40,21 @@ Under the hood, it's powered by OpenAI's Whisper model, making it significantly 
 
 > **Important Note**: Whispering is designed primarily as a transcription tool, not a recording tool. For longer recordings where reliability is crucial, I recommend using a dedicated recording app on your phone or device that utilizes native recording APIs. This ensures optimal audio quality and recording stability.
 
+
+### Whispering - Electron App
+
+This is the Electron version of the Whispering application, converted from Tauri.
+
+## Features
+
+- Desktop application for recording, transcribing, and transforming audio
+- Built with Svelte/SvelteKit and Electron
+- Cross-platform compatibility (Windows, macOS, Linux)
+- Seamless Tauri-to-Electron compatibility layer
+
+See the [README.md](README.md) for details
+
+
 ## Demos
 
 https://github.com/user-attachments/assets/eca93701-10a0-4d91-b38a-f715bd7e0357
