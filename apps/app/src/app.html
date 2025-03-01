@@ -4,9 +4,14 @@
 		<meta charset="utf-8" />
 		<link rel="icon" href="%sveltekit.assets%/favicon.ico" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline'; img-src 'self' data:">
 		%sveltekit.head%
 	</head>
 	<body data-sveltekit-preload-data="hover">
 		<div style="display: contents">%sveltekit.body%</div>
+		<script>
+			// Force path base to root for Electron compatibility
+			window.BASE_PATH = '/';
+		</script>
 	</body>
 </html>

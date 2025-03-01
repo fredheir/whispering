@@ -2,14 +2,16 @@
 	"name": "@repo/app",
 	"version": "6.4.3",
 	"private": true,
+	"main": "main.cjs",
 	"scripts": {
 		"dev:web": "vite dev",
-		"dev": "pnpm tauri dev",
+		"dev": "concurrently \"vite dev\" \"wait-on http://localhost:5173 && cross-env NODE_ENV=development electron .\"",
 		"build": "vite build",
 		"preview": "vite preview",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
-		"tauri": "cross-env BUILD_TARGET=native tauri",
+		"start": "electron .",
+		"build:electron": "vite build && electron-builder",
 		"lint": "eslint --fix . && prettier --check .",
 		"format": "prettier --write ."
 	},
@@ -19,11 +21,13 @@
 		"@sveltejs/adapter-vercel": "^5.5.2",
 		"@sveltejs/kit": "^2.12.1",
 		"@sveltejs/vite-plugin-svelte": "^5.0.2",
-		"@tauri-apps/cli": "^2.1.0",
 		"@types/chrome": "^0.0.287",
 		"autoprefixer": "^10.4.20",
 		"bits-ui": "1.0.0-next.89",
 		"clsx": "^2.1.1",
+		"concurrently": "^9.1.2",
+		"electron": "^34.3.0",
+		"electron-builder": "^25.1.8",
 		"eslint": "^9.17.0",
 		"eslint-config-prettier": "^9.1.0",
 		"eslint-plugin-svelte": "^2.46.1",
@@ -43,7 +47,8 @@
 		"tailwindcss-animate": "^1.0.7",
 		"typescript": "^5.7.2",
 		"typescript-eslint": "^8.18.1",
-		"vite": "^6.0.3"
+		"vite": "^6.0.3",
+		"wait-on": "^8.0.2"
 	},
 	"type": "module",
 	"dependencies": {
@@ -58,18 +63,6 @@
 		"@tanstack/svelte-query-devtools": "https://pkg.pr.new/@tanstack/svelte-query-devtools@56f67c7d62d60b26a3dfbf8e359f12257dcbc8eb",
 		"@tanstack/svelte-table": "^9.0.0-alpha.10",
 		"@tanstack/table-core": "^9.0.0-alpha.10",
-		"@tauri-apps/api": "^2.1.1",
-		"@tauri-apps/plugin-clipboard-manager": "^2.2.0",
-		"@tauri-apps/plugin-dialog": "^2.2.0",
-		"@tauri-apps/plugin-fs": "^2.2.0",
-		"@tauri-apps/plugin-global-shortcut": "^2.2.0",
-		"@tauri-apps/plugin-http": "^2.2.0",
-		"@tauri-apps/plugin-notification": "^2.2.0",
-		"@tauri-apps/plugin-os": "^2.2.0",
-		"@tauri-apps/plugin-process": "^2.2.0",
-		"@tauri-apps/plugin-shell": "^2.2.0",
-		"@tauri-apps/plugin-sql": "^2.2.0",
-		"@tauri-apps/plugin-window-state": "^2.2.0",
 		"audio-recorder-polyfill": "^0.4.1",
 		"cross-env": "^7.0.3",
 		"date-fns": "^4.1.0",
@@ -78,5 +71,27 @@
 		"idb": "^8.0.1",
 		"nanoid": "^5.0.9",
 		"zod": "^3.24.1"
+	},
+	"build": {
+		"appId": "com.whispering.app",
+		"productName": "Whispering",
+		"files": [
+			"main.js",
+			"build/**/*",
+			"node_modules/**/*"
+		],
+		"directories": {
+			"buildResources": "static",
+			"output": "dist-electron"
+		},
+		"mac": {
+			"category": "public.app-category.productivity"
+		},
+		"linux": {
+			"category": "Utility"
+		},
+		"win": {
+			"target": "nsis"
+		}
 	}
 }

@@ -1,38 +1,81 @@
-# create-svelte
+# Whispering - Electron App
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/main/packages/create-svelte).
+This is the Electron version of the Whispering application, converted from Tauri.
 
-## Creating a project
+## Features
 
-If you're seeing this, you've probably already done this step. Congrats!
+- Desktop application for recording, transcribing, and transforming audio
+- Built with Svelte/SvelteKit and Electron
+- Cross-platform compatibility (Windows, macOS, Linux)
+- Seamless Tauri-to-Electron compatibility layer
 
-```bash
-# create a new project in the current directory
-npm create svelte@latest
+## Getting Started
 
-# create a new project in my-app
-npm create svelte@latest my-app
-```
+### Development
 
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+To run the app in development mode:
 
 ```bash
-npm run dev
+# Install dependencies
+pnpm install
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
+# Install Electron dependencies
+chmod +x install-electron-deps.sh
+./install-electron-deps.sh
+
+# Run in development mode
+BUILD_TARGET=electron pnpm dev
 ```
 
-## Building
+This will start both the Vite development server and the Electron app, with the Electron app connecting to the Vite dev server.
 
-To create a production version of your app:
+### Production Build
+
+To build the app for production:
 
 ```bash
-npm run build
+# Build the web assets and package the Electron app
+BUILD_TARGET=electron pnpm build:electron
 ```
 
-You can preview the production build with `npm run preview`.
+This will create distributable packages in the `dist-electron` directory.
 
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+## Project Structure
+
+- `main.cjs` - The Electron main process file
+- `preload.cjs` - Secure bridge between Electron processes
+- `src/` - The Svelte application code
+  - `src/lib/electronAdapter.ts` - Electron API adapter
+  - `src/lib/tauri-shim.ts` - Tauri API compatibility layer
+- `build/` - The built Svelte application (after running `pnpm build`)
+- `dist-electron/` - The packaged Electron applications (after running `pnpm build:electron`)
+
+## Tauri to Electron Migration
+
+This application was migrated from Tauri to Electron. The key components of this migration are:
+
+1. **Compatibility Layer**: The `tauri-shim.ts` provides mock implementations of Tauri APIs to prevent import errors, while the `electronAdapter.ts` provides a unified API surface.
+
+2. **IPC Communication**: Secure communication between the renderer process and main process is implemented via the preload script.
+
+3. **Configuration**: The build process has been adapted to work with Electron through modifications to SvelteKit and Vite configurations.
+
+## API Surface
+
+The application exposes several modules through the `electronAdapter.ts`:
+
+- `fs`: File system operations
+- `clipboard`: Clipboard operations
+- `dialog`: Dialog operations
+- `notification`: Notification operations
+- `windowManager`: Window management
+- `shell`: External operations (opening URLs)
+- `platform`: Platform detection
+
+## Configuration
+
+The Electron build configuration is defined in the `build` section of `package.json`. You can customize this to adjust how the app is packaged.
+
+## Contributing
+
+Please see the [MIGRATION.md](./MIGRATION.md) file for detailed information about the migration process and how to contribute to further Electron development.
